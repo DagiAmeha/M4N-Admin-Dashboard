@@ -195,7 +195,6 @@ export default function PaymentsPage() {
     const results = activeRecords.filter((record) => {
       const amount = getRecordAmount(record);
       const status = getRecordStatus(record);
-      const timestamp = getRecordTimestamp(record);
       const searchable = getRecordSearchText(record, selectedType);
 
       if (query && !searchable.includes(query)) return false;

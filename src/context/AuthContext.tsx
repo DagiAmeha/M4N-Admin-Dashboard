@@ -10,7 +10,6 @@ import {
   signOut,
   onAuthStateChanged,
   type User as FirebaseUser,
-  onIdTokenChanged,
 } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import api from "../api/axios";

@@ -12,10 +12,23 @@ import {
   LogOut,
   Radio,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import toast from "react-hot-toast";
 
-const sections = [
+type SidebarItem = {
+  to: string;
+  icon: LucideIcon;
+  label: string;
+  end?: boolean;
+};
+
+type SidebarSection = {
+  label: string;
+  items: SidebarItem[];
+};
+
+const sections: SidebarSection[] = [
   {
     label: "OVERVIEW",
     items: [{ to: "/", icon: LayoutDashboard, label: "Dashboard", end: true }],

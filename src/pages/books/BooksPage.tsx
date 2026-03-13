@@ -9,7 +9,6 @@ import Modal from "../../components/ui/Modal";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import { Input, Textarea } from "../../components/ui/Input";
 import FileUpload from "../../components/ui/FileUpload";
-import Badge from "../../components/ui/Badge";
 import toast from "react-hot-toast";
 
 export default function BooksPage() {

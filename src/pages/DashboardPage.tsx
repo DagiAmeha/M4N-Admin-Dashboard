@@ -12,7 +12,6 @@ import { Link } from "react-router-dom";
 import StatsCard from "../components/ui/StatsCard";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
-import { type PaymentSummaryData } from "../components/ui/PaymentSummaryChart";
 import YearlyPerformanceDashboard from "../components/dashboard/YearlyPerformanceDashboard";
 
 interface Stats {
@@ -24,17 +23,7 @@ interface Stats {
   plans: number;
 }
 
-interface PaymentSourceItem {
-  amount?: number;
-  type?: string;
-  reason?: string;
-  createdAt?: string;
-}
-
 export default function DashboardPage() {
-  const [paymentSummary, setPaymentSummary] = useState<PaymentSummaryData[]>(
-    [],
-  );
   const { user } = useAuth();
   const [stats, setStats] = useState<Stats>({
     sermons: 0,
@@ -47,93 +36,6 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadPayments() {
-      try {
-        // Fetch all payments (books, subscriptions, donations)
-        const [bookRes, subRes, donationRes] = await Promise.all([
-          api.get("/api/purchase/all?page=1&limit=100"),
-          api.get("/api/subscription/all?page=1&limit=100"),
-          api.get("/api/donations/all?page=1&limit=100"),
-        ]);
-        // Combine and aggregate by month/type
-        const payments: Array<{
-          amount: number;
-          type: string;
-          createdAt: string;
-        }> = [];
-        // Books
-        (bookRes.data?.data ?? []).forEach((p: PaymentSourceItem) => {
-          if (!p.createdAt) return;
-
-          payments.push({
-            amount: p.amount ?? 0,
-            type: "tithe", // You may want to map this differently
-            createdAt: p.createdAt,
-          });
-        });
-        // Subscriptions
-        (subRes.data?.data ?? []).forEach((s: PaymentSourceItem) => {
-          if (!s.createdAt) return;
-
-          payments.push({
-            amount: s.amount ?? 0,
-            type: s.type?.toLowerCase() ?? "other",
-            createdAt: s.createdAt,
-          });
-        });
-        // Donations
-        (donationRes.data?.data ?? []).forEach((d: PaymentSourceItem) => {
-          if (!d.createdAt) return;
-
-          payments.push({
-            amount: d.amount ?? 0,
-            type: d.reason?.toLowerCase() ?? "other",
-            createdAt: d.createdAt,
-          });
-        });
-        // Group by month and type
-        const monthNames = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ];
-        const summary: { [month: string]: { [type: string]: number } } = {};
-        payments.forEach((p) => {
-          const date = new Date(p.createdAt);
-          const month = monthNames[date.getMonth()];
-          if (!summary[month])
-            summary[month] = { tithe: 0, gift: 0, offering: 0, other: 0 };
-          if (["tithe", "gift", "offering", "other"].includes(p.type)) {
-            summary[month][p.type] += p.amount;
-          } else {
-            summary[month]["other"] += p.amount;
-          }
-        });
-        // Convert to chart data
-        const chartData: PaymentSummaryData[] = Object.entries(summary).map(
-          ([month, values]) => ({
-            month,
-            tithe: values.tithe,
-            gift: values.gift,
-            offering: values.offering,
-            other: values.other,
-          }),
-        );
-        setPaymentSummary(chartData);
-      } catch {
-        // Optionally handle error
-      }
-    }
-    loadPayments();
     async function load() {
       try {
         const [sermons, books, events, testimonies, plans, users] =
