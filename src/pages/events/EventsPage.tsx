@@ -8,6 +8,7 @@ import Button from "../../components/ui/Button";
 import Modal from "../../components/ui/Modal";
 import ConfirmDialog from "../../components/ui/ConfirmDialog";
 import { Input, Textarea } from "../../components/ui/Input";
+import FileUpload from "../../components/ui/FileUpload";
 import Badge from "../../components/ui/Badge";
 import Pagination from "../../components/ui/Pagination";
 import toast from "react-hot-toast";
@@ -28,7 +29,7 @@ export default function EventsPage() {
   const [description, setDescription] = useState("");
   const [dateTime, setDateTime] = useState("");
   const [location, setLocation] = useState("");
-  const [coverImage, setCoverImage] = useState("");
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [allowsRegistration, setAllowsRegistration] = useState(true);
   const [isFull, setIsFull] = useState(false);
 
@@ -59,7 +60,7 @@ export default function EventsPage() {
     setDescription("");
     setDateTime("");
     setLocation("");
-    setCoverImage("");
+    setCoverFile(null);
     setAllowsRegistration(true);
     setIsFull(false);
     setModalOpen(true);
@@ -71,7 +72,7 @@ export default function EventsPage() {
     setDescription(ev.description);
     setDateTime(ev.date_time.slice(0, 16));
     setLocation(ev.location);
-    setCoverImage(ev.cover_image ?? "");
+    setCoverFile(null);
     setAllowsRegistration(ev.allows_registration);
     setIsFull(ev.is_full);
     setModalOpen(true);
@@ -83,20 +84,20 @@ export default function EventsPage() {
     }
     setSaving(true);
     try {
-      const body = {
-        title,
-        description,
-        date_time: new Date(dateTime).toISOString(),
-        location,
-        ...(coverImage ? { cover_image: coverImage } : {}),
-        allows_registration: allowsRegistration,
-        ...(editing ? { is_full: isFull } : {}),
-      };
+      const fd = new FormData();
+      fd.append("title", title);
+      fd.append("description", description);
+      fd.append("date_time", new Date(dateTime).toISOString());
+      fd.append("location", location);
+      fd.append("allows_registration", String(allowsRegistration));
+      if (editing) fd.append("is_full", String(isFull));
+      if (coverFile) fd.append("cover_image", coverFile);
+
       if (editing) {
-        await api.put(`/api/events/${editing._id}`, body);
+        await api.put(`/api/events/${editing._id}`, fd);
         toast.success("Event updated");
       } else {
-        await api.post("/api/events", body);
+        await api.post("/api/events", fd);
         toast.success("Event created");
       }
       setModalOpen(false);
@@ -237,12 +238,18 @@ export default function EventsPage() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
           />
-          <Input
-            label="Cover Image URL (optional)"
-            value={coverImage}
-            onChange={(e) => setCoverImage(e.target.value)}
-            className="md:col-span-2"
-            placeholder="https://..."
+          <FileUpload
+            label={
+              editing
+                ? "Cover Image (leave empty to keep current)"
+                : "Cover Image (optional)"
+            }
+            accept="image/*"
+            onChange={setCoverFile}
+            current={
+              coverFile?.name ??
+              (editing?.cover_image ? "Current image already uploaded" : "")
+            }
           />
           <div className="flex items-center gap-3">
             <input
