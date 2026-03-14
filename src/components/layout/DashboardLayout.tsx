@@ -28,8 +28,8 @@ export default function DashboardLayout() {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen bg-gray-100 overflow-hidden">
-      <div className="hidden lg:flex">
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
+      <div className="hidden h-screen lg:flex">
         <Sidebar />
       </div>
 
@@ -107,7 +107,7 @@ export default function DashboardLayout() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-y-auto">
           <div className="p-3 sm:p-4 md:p-6">
             <Outlet />
           </div>

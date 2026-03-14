@@ -24,6 +24,30 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function getFirebaseSignInErrorMessage(error: unknown): string {
+  const code =
+    typeof error === "object" && error !== null && "code" in error
+      ? String((error as { code?: string }).code)
+      : "";
+
+  switch (code) {
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
+    case "auth/user-disabled":
+      return "This account has been disabled. Please contact support.";
+    case "auth/invalid-credential":
+    case "auth/user-not-found":
+    case "auth/wrong-password":
+      return "Incorrect email or password. Please try again.";
+    case "auth/too-many-requests":
+      return "Too many failed attempts. Please wait a few minutes and try again.";
+    case "auth/network-request-failed":
+      return "Network issue detected. Check your internet connection and try again.";
+    default:
+      return "Unable to sign in right now. Please try again.";
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
     const stored = localStorage.getItem("admin_user");
@@ -52,7 +76,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     // 1. Firebase sign-in
-    const credential = await signInWithEmailAndPassword(auth, email, password);
+    let credential;
+    try {
+      credential = await signInWithEmailAndPassword(auth, email, password);
+    } catch (error: unknown) {
+      throw new Error(getFirebaseSignInErrorMessage(error));
+    }
 
     // 2. Get Firebase ID token
     const token = await credential.user.getIdToken();

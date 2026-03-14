@@ -75,7 +75,7 @@ export default function Sidebar({ className = "", onNavigate }: SidebarProps) {
 
   return (
     <aside
-      className={`w-60 min-h-screen bg-gray-900 flex flex-col shrink-0 ${className}`}
+      className={`w-60 h-full bg-gray-900 flex flex-col shrink-0 ${className}`}
     >
       {/* Logo */}
       <div className="px-4 py-4 border-b border-gray-800">
