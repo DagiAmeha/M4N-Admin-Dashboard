@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Radio, Play, Square, Youtube } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
@@ -19,6 +19,51 @@ interface ApiErrorShape {
       message?: string;
     };
   };
+}
+
+interface LiveStatusResponse {
+  isLive?: boolean;
+  youtubeVideoId?: string;
+  data?: {
+    isLive?: boolean;
+    youtubeVideoId?: string;
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function extractLiveStatus(payload: unknown): {
+  isLive?: boolean;
+  youtubeVideoId?: string;
+} {
+  if (!isRecord(payload)) return {};
+
+  const directIsLive = payload.isLive;
+  const directYoutubeVideoId = payload.youtubeVideoId;
+  if (typeof directIsLive === "boolean") {
+    return {
+      isLive: directIsLive,
+      youtubeVideoId:
+        typeof directYoutubeVideoId === "string"
+          ? directYoutubeVideoId
+          : undefined,
+    };
+  }
+
+  const nestedData = payload.data;
+  if (isRecord(nestedData) && typeof nestedData.isLive === "boolean") {
+    return {
+      isLive: nestedData.isLive,
+      youtubeVideoId:
+        typeof nestedData.youtubeVideoId === "string"
+          ? nestedData.youtubeVideoId
+          : undefined,
+    };
+  }
+
+  return {};
 }
 
 function getErrorMessage(error: unknown, fallback: string): string {
@@ -47,6 +92,7 @@ export default function LiveSessionPage() {
   const [youtubeVideoId, setYoutubeVideoId] = useState("");
   const [durationMinutes, setDurationMinutes] = useState("");
   const [status, setStatus] = useState<LiveStatus>("unknown");
+  const [syncingStatus, setSyncingStatus] = useState(false);
   const [starting, setStarting] = useState(false);
   const [stopping, setStopping] = useState(false);
   const [lastStartedVideoId, setLastStartedVideoId] = useState<string | null>(
@@ -63,19 +109,49 @@ export default function LiveSessionPage() {
     unknown: {
       label: "Not Synced",
       className: "bg-gray-100 text-gray-700 border-gray-200",
-      helper: "Status is based on your last action in this dashboard.",
+      helper: "Unable to determine live status from the server.",
     },
     live: {
       label: "Live",
       className: "bg-green-100 text-green-700 border-green-200",
-      helper: "A live session was started from this dashboard.",
+      helper: "The API reports that a live session is currently running.",
     },
     stopped: {
       label: "Stopped",
       className: "bg-red-100 text-red-700 border-red-200",
-      helper: "The latest action from this dashboard was stop.",
+      helper: "The API reports that the live session is currently stopped.",
     },
   } as const;
+
+  async function syncLiveStatus() {
+    setSyncingStatus(true);
+    try {
+      const res = await api.get<LiveStatusResponse>("/api/live");
+      const { isLive, youtubeVideoId: currentYoutubeVideoId } =
+        extractLiveStatus(res.data);
+
+      if (typeof isLive === "boolean") {
+        setStatus(isLive ? "live" : "stopped");
+      } else {
+        setStatus("unknown");
+      }
+
+      if (
+        typeof currentYoutubeVideoId === "string" &&
+        currentYoutubeVideoId.trim().length > 0
+      ) {
+        setLastStartedVideoId(currentYoutubeVideoId);
+      }
+    } catch {
+      setStatus("unknown");
+    } finally {
+      setSyncingStatus(false);
+    }
+  }
+
+  useEffect(() => {
+    void syncLiveStatus();
+  }, []);
 
   async function handleStartLive() {
     const normalizedVideoId = normalizeYoutubeVideoId(youtubeVideoId);
@@ -109,6 +185,7 @@ export default function LiveSessionPage() {
         res.data?.message ??
           "Live session started successfully. People can now join the stream.",
       );
+      await syncLiveStatus();
     } catch (error: unknown) {
       toast.error(
         getErrorMessage(
@@ -133,6 +210,7 @@ export default function LiveSessionPage() {
         res.data?.message ??
           "Live session stopped successfully. Your audience can no longer watch live.",
       );
+      await syncLiveStatus();
     } catch (error: unknown) {
       toast.error(
         getErrorMessage(
@@ -197,11 +275,13 @@ export default function LiveSessionPage() {
             className={`mt-4 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold ${statusMeta[status].className}`}
           >
             <span className="w-2 h-2 rounded-full bg-current opacity-75" />
-            {statusMeta[status].label}
+            {syncingStatus ? "Checking..." : statusMeta[status].label}
           </div>
 
           <p className="mt-3 text-sm text-gray-500">
-            {statusMeta[status].helper}
+            {syncingStatus
+              ? "Syncing current live status from the API."
+              : statusMeta[status].helper}
           </p>
 
           <div className="mt-5 rounded-lg border border-gray-100 bg-gray-50 p-4 text-sm text-gray-700 space-y-3">

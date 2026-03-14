@@ -144,21 +144,23 @@ export default function SermonsPage() {
         color="bg-indigo-600"
         count={sermons.length}
         action={
-          <Button onClick={openCreate} variant="light">
+          <Button
+            onClick={openCreate}
+            variant="light"
+            className="w-full justify-center sm:w-auto"
+          >
             <Plus size={16} />
             New Sermon
           </Button>
         }
       />
 
-      <div className="mb-4">
-        <label className="text-sm font-medium text-gray-700 mr-3">
-          Category:
-        </label>
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <label className="text-sm font-medium text-gray-700">Category:</label>
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:w-auto"
         >
           {categories.map((c) => (
             <option key={c._id} value={c._id}>
@@ -240,12 +242,12 @@ export default function SermonsPage() {
         title={editing ? "Edit Sermon" : "New Sermon"}
         size="xl"
       >
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Input
             label="Title *"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="col-span-2"
+            className="md:col-span-2"
           />
           <Input
             label="Pastor Name *"
@@ -284,7 +286,7 @@ export default function SermonsPage() {
               Premium content
             </label>
           </div>
-          <div className="col-span-2">
+          <div className="md:col-span-2">
             <FileUpload
               label={
                 editing
@@ -296,7 +298,7 @@ export default function SermonsPage() {
               current={coverFile?.name}
             />
           </div>
-          <div className="col-span-2">
+          <div className="md:col-span-2">
             <FileUpload
               label="Audio File (optional)"
               accept="audio/*"
@@ -305,7 +307,7 @@ export default function SermonsPage() {
             />
           </div>
         </div>
-        <div className="flex justify-end gap-3 pt-4">
+        <div className="flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:justify-end sm:gap-3">
           <Button
             variant="secondary"
             onClick={() => setModalOpen(false)}

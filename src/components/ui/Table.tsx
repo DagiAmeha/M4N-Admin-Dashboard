@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type ReactNode } from "react";
 
 interface Column<T> {
   header: string;
@@ -14,17 +14,23 @@ interface TableProps<T> {
   keyExtractor: (row: T) => string;
 }
 
-export default function Table<T>({ columns, data, loading, emptyMessage = 'No data found', keyExtractor }: TableProps<T>) {
+export default function Table<T>({
+  columns,
+  data,
+  loading,
+  emptyMessage = "No data found",
+  keyExtractor,
+}: TableProps<T>) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-100">
+        <table className="w-full min-w-[680px] divide-y divide-gray-100">
           <thead>
             <tr className="bg-gray-50">
               {columns.map((col) => (
                 <th
                   key={col.header}
-                  className={`px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider ${col.className ?? ''}`}
+                  className={`whitespace-nowrap px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500 ${col.className ?? ""}`}
                 >
                   {col.header}
                 </th>
@@ -43,7 +49,10 @@ export default function Table<T>({ columns, data, loading, emptyMessage = 'No da
               </tr>
             ) : data.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-14 text-center text-sm text-gray-400">
+                <td
+                  colSpan={columns.length}
+                  className="px-4 py-14 text-center text-sm text-gray-400"
+                >
                   {emptyMessage}
                 </td>
               </tr>
@@ -51,10 +60,13 @@ export default function Table<T>({ columns, data, loading, emptyMessage = 'No da
               data.map((row, i) => (
                 <tr
                   key={keyExtractor(row)}
-                  className={`hover:bg-indigo-50/40 transition-colors ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}`}
+                  className={`hover:bg-indigo-50/40 transition-colors ${i % 2 === 0 ? "bg-white" : "bg-gray-50/30"}`}
                 >
                   {columns.map((col) => (
-                    <td key={col.header} className={`px-4 py-3 text-sm text-gray-700 ${col.className ?? ''}`}>
+                    <td
+                      key={col.header}
+                      className={`px-4 py-3 align-top text-sm text-gray-700 ${col.className ?? ""}`}
+                    >
                       {col.cell(row)}
                     </td>
                   ))}

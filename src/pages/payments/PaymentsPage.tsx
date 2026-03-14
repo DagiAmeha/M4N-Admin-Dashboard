@@ -374,8 +374,8 @@ export default function PaymentsPage() {
         count={filteredRecords.length}
       />
 
-      <div className="mb-4 bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="mb-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Type
@@ -426,7 +426,7 @@ export default function PaymentsPage() {
             </select>
           </div>
 
-          <div className="md:col-span-2">
+          <div className="sm:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Search by Name, Email, Reference, or Type
             </label>
@@ -439,7 +439,7 @@ export default function PaymentsPage() {
             />
           </div>
 
-          <div className="flex items-center gap-2 pt-6">
+          <div className="flex items-center gap-2 pt-1 sm:pt-6">
             <input
               id="high-value-only"
               type="checkbox"
@@ -472,7 +472,7 @@ export default function PaymentsPage() {
           </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-between gap-3">
+        <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <p className="text-xs text-gray-500">
             Showing {pagedRecords.length} of {filteredRecords.length} matching
             transactions

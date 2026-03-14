@@ -128,7 +128,11 @@ export default function BooksPage() {
         color="bg-blue-600"
         count={books.length}
         action={
-          <Button onClick={openCreate} variant="light">
+          <Button
+            onClick={openCreate}
+            variant="light"
+            className="w-full justify-center sm:w-auto"
+          >
             <Plus size={16} />
             New Book
           </Button>
@@ -191,12 +195,12 @@ export default function BooksPage() {
         title={editing ? "Edit Book" : "New Book"}
         size="xl"
       >
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Input
             label="Title *"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="col-span-2"
+            className="md:col-span-2"
           />
           <Input
             label="Author *"
@@ -220,7 +224,7 @@ export default function BooksPage() {
             label="Description *"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="col-span-2"
+            className="md:col-span-2"
           />
           <FileUpload
             label={
@@ -241,7 +245,7 @@ export default function BooksPage() {
             current={bookFile?.name}
           />
         </div>
-        <div className="flex justify-end gap-3 pt-4">
+        <div className="flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:justify-end sm:gap-3">
           <Button
             variant="secondary"
             onClick={() => setModalOpen(false)}

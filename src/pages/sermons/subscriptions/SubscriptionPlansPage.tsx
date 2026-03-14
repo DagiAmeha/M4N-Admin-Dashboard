@@ -80,7 +80,11 @@ export default function SubscriptionPlansPage() {
         color="bg-purple-600"
         count={plans.length}
         action={
-          <Button onClick={openCreate} variant="light">
+          <Button
+            onClick={openCreate}
+            variant="light"
+            className="w-full justify-center sm:w-auto"
+          >
             <Plus size={16} />
             New Plan
           </Button>
@@ -158,7 +162,7 @@ export default function SubscriptionPlansPage() {
             rows={3}
           />
         </div>
-        <div className="flex justify-end gap-3 pt-4">
+        <div className="flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:justify-end sm:gap-3">
           <Button
             variant="secondary"
             onClick={() => setModalOpen(false)}

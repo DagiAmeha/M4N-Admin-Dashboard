@@ -159,7 +159,7 @@ export default function YearlyPerformanceDashboard() {
   const isEmptyState = !loading && !error && monthlyData.length === 0;
 
   return (
-    <section className="bg-gray-50 rounded-2xl border border-teal-100 p-5 md:p-6 space-y-6">
+    <section className="space-y-6 rounded-2xl border border-teal-100 bg-gray-50 p-4 sm:p-5 md:p-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-teal-900">
@@ -203,7 +203,7 @@ export default function YearlyPerformanceDashboard() {
       ) : null}
 
       {summaryCards.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {summaryCards.map((card) => (
             <article
               key={card.label}
@@ -229,7 +229,7 @@ export default function YearlyPerformanceDashboard() {
       ) : null}
 
       {loading ? (
-        <div className="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-gray-100 h-85 flex items-center justify-center">
+        <div className="flex h-[18rem] items-center justify-center rounded-xl border border-gray-100 bg-white p-4 shadow-sm md:h-[21rem] md:p-5">
           <LoadingSpinner />
         </div>
       ) : null}
@@ -239,7 +239,7 @@ export default function YearlyPerformanceDashboard() {
           <h3 className="text-sm font-semibold text-gray-800 mb-4">
             Monthly Comparison
           </h3>
-          <div className="h-85">
+          <div className="h-[18rem] md:h-[21rem]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={monthlyData}

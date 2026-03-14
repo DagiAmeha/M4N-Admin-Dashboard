@@ -142,7 +142,11 @@ export default function TestimoniesPage() {
         color="bg-pink-500"
         count={total}
         action={
-          <Button onClick={openCreate} variant="light">
+          <Button
+            onClick={openCreate}
+            variant="light"
+            className="w-full justify-center sm:w-auto"
+          >
             <Plus size={16} />
             New Testimony
           </Button>
@@ -268,7 +272,7 @@ export default function TestimoniesPage() {
             }
           />
         </div>
-        <div className="flex justify-end gap-3 pt-4">
+        <div className="flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:justify-end sm:gap-3">
           <Button
             variant="secondary"
             onClick={() => setModalOpen(false)}

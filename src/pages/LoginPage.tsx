@@ -1,11 +1,18 @@
-import { useState, type FormEvent, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import toast from 'react-hot-toast';
+import { useState, type FormEvent, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Mail, Lock, LogIn } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 /* ── floating gold particles ── */
-interface Particle { id: number; x: number; size: number; duration: number; delay: number; opacity: number }
+interface Particle {
+  id: number;
+  x: number;
+  size: number;
+  duration: number;
+  delay: number;
+  opacity: number;
+}
 
 function Particles() {
   const [particles, setParticles] = useState<Particle[]>([]);
@@ -18,7 +25,7 @@ function Particles() {
         duration: Math.random() * 12 + 8,
         delay: Math.random() * 10,
         opacity: Math.random() * 0.5 + 0.1,
-      }))
+      })),
     );
   }, []);
 
@@ -33,7 +40,7 @@ function Particles() {
             width: p.size,
             height: p.size,
             opacity: p.opacity,
-            background: 'radial-gradient(circle, #f5d060, #c8960c)',
+            background: "radial-gradient(circle, #f5d060, #c8960c)",
             animation: `floatUp ${p.duration}s ${p.delay}s infinite linear`,
           }}
         />
@@ -49,20 +56,22 @@ function AnimatedDivider() {
       <div
         className="h-px"
         style={{
-          background: 'linear-gradient(to right, transparent, #d4a017)',
-          animation: 'expandLine 1.4s 0.6s both ease-out',
+          background: "linear-gradient(to right, transparent, #d4a017)",
+          animation: "expandLine 1.4s 0.6s both ease-out",
           width: 0,
         }}
       />
-      <span className="text-yellow-700 text-xs tracking-widest uppercase font-medium whitespace-nowrap"
-        style={{ animation: 'fadeInUp 0.8s 1s both' }}>
+      <span
+        className="text-yellow-700 text-xs tracking-widest uppercase font-medium whitespace-nowrap"
+        style={{ animation: "fadeInUp 0.8s 1s both" }}
+      >
         Admin Dashboard
       </span>
       <div
         className="h-px"
         style={{
-          background: 'linear-gradient(to left, transparent, #d4a017)',
-          animation: 'expandLine 1.4s 0.6s both ease-out',
+          background: "linear-gradient(to left, transparent, #d4a017)",
+          animation: "expandLine 1.4s 0.6s both ease-out",
           width: 0,
         }}
       />
@@ -73,13 +82,13 @@ function AnimatedDivider() {
 export default function LoginPage() {
   const { login, user } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   if (user) {
-    navigate('/', { replace: true });
+    navigate("/", { replace: true });
     return null;
   }
 
@@ -88,11 +97,11 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(email, password);
-      navigate('/', { replace: true });
+      navigate("/", { replace: true });
     } catch (err: unknown) {
       const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-        (err instanceof Error ? err.message : 'Login failed');
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? (err instanceof Error ? err.message : "Login failed");
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -144,11 +153,13 @@ export default function LoginPage() {
       `}</style>
 
       <div className="min-h-screen flex bg-black overflow-hidden">
-
         {/* ════ LEFT branding panel ════ */}
         <div
           className="hidden lg:flex flex-col items-center justify-between w-1/2 p-12 relative overflow-hidden"
-          style={{ background: 'radial-gradient(ellipse at center top, #1a1200 0%, #000000 70%)' }}
+          style={{
+            background:
+              "radial-gradient(ellipse at center top, #1a1200 0%, #000000 70%)",
+          }}
         >
           {/* floating particles */}
           <Particles />
@@ -157,16 +168,25 @@ export default function LoginPage() {
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
             style={{
-              background: 'radial-gradient(circle, #d4a017 0%, transparent 65%)',
-              animation: 'breatheGlow 6s ease-in-out infinite',
+              background:
+                "radial-gradient(circle, #d4a017 0%, transparent 65%)",
+              animation: "breatheGlow 6s ease-in-out infinite",
               opacity: 0.18,
             }}
           />
 
           {/* top badge */}
-          <div className="flex items-center gap-2 self-start z-10" style={{ animation: 'fadeInUp 0.7s 0.2s both' }}>
-            <div className="w-2 h-2 rounded-full bg-yellow-500" style={{ animation: 'dotBlink 2s infinite' }} />
-            <span className="text-yellow-600 text-xs font-semibold tracking-widest uppercase">Admin Portal</span>
+          <div
+            className="flex items-center gap-2 self-start z-10"
+            style={{ animation: "fadeInUp 0.7s 0.2s both" }}
+          >
+            <div
+              className="w-2 h-2 rounded-full bg-yellow-500"
+              style={{ animation: "dotBlink 2s infinite" }}
+            />
+            <span className="text-yellow-600 text-xs font-semibold tracking-widest uppercase">
+              Admin Portal
+            </span>
           </div>
 
           {/* center: logo + name */}
@@ -176,32 +196,42 @@ export default function LoginPage() {
               <div
                 className="absolute w-72 h-72 rounded-full blur-3xl pointer-events-none"
                 style={{
-                  background: 'radial-gradient(circle, #d4a017 30%, transparent 70%)',
-                  animation: 'breatheGlow 4s ease-in-out infinite',
+                  background:
+                    "radial-gradient(circle, #d4a017 30%, transparent 70%)",
+                  animation: "breatheGlow 4s ease-in-out infinite",
                 }}
               />
               <div
                 style={{
-                  mixBlendMode: 'screen',
-                  display: 'inline-flex',
-                  animation: 'logoEntrance 1s 0.3s both cubic-bezier(0.34,1.56,0.64,1)',
+                  mixBlendMode: "screen",
+                  display: "inline-flex",
+                  animation:
+                    "logoEntrance 1s 0.3s both cubic-bezier(0.34,1.56,0.64,1)",
                 }}
               >
-                <img src="/assets/logo.png" alt="Mission For Nation Ministry" className="w-56 h-56 object-contain" />
+                <img
+                  src="/assets/logo.png"
+                  alt="Mission For Nation Ministry"
+                  className="w-56 h-56 object-contain"
+                />
               </div>
             </div>
 
             {/* church name with shimmer */}
-            <div className="text-center" style={{ animation: 'fadeInUp 0.9s 0.8s both' }}>
+            <div
+              className="text-center"
+              style={{ animation: "fadeInUp 0.9s 0.8s both" }}
+            >
               <h1
                 className="text-3xl font-black tracking-wide leading-tight"
                 style={{
-                  backgroundImage: 'linear-gradient(90deg, #c8960c 0%, #f5d060 30%, #fffbe6 50%, #f5d060 70%, #c8960c 100%)',
-                  backgroundSize: '200% auto',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  animation: 'shimmerText 3.5s linear infinite',
+                  backgroundImage:
+                    "linear-gradient(90deg, #c8960c 0%, #f5d060 30%, #fffbe6 50%, #f5d060 70%, #c8960c 100%)",
+                  backgroundSize: "200% auto",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  animation: "shimmerText 3.5s linear infinite",
                 }}
               >
                 Mission For Nation
@@ -209,12 +239,13 @@ export default function LoginPage() {
               <h2
                 className="text-xl font-bold tracking-widest uppercase mt-1"
                 style={{
-                  backgroundImage: 'linear-gradient(90deg, #9a7209 0%, #e8c040 40%, #fffbe6 50%, #e8c040 60%, #9a7209 100%)',
-                  backgroundSize: '200% auto',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  animation: 'shimmerText 3.5s 0.4s linear infinite',
+                  backgroundImage:
+                    "linear-gradient(90deg, #9a7209 0%, #e8c040 40%, #fffbe6 50%, #e8c040 60%, #9a7209 100%)",
+                  backgroundSize: "200% auto",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  animation: "shimmerText 3.5s 0.4s linear infinite",
                 }}
               >
                 Ministry
@@ -226,41 +257,57 @@ export default function LoginPage() {
           {/* bottom verse */}
           <p
             className="text-center text-gray-600 text-xs italic leading-relaxed max-w-xs z-10"
-            style={{ animation: 'fadeInUp 0.8s 1.4s both' }}
+            style={{ animation: "fadeInUp 0.8s 1.4s both" }}
           >
             "Go therefore and make disciples of all nations"
             <br />
-            <span className="text-yellow-800 not-italic font-semibold">— Matthew 28:19</span>
+            <span className="text-yellow-800 not-italic font-semibold">
+              — Matthew 28:19
+            </span>
           </p>
         </div>
 
         {/* ════ RIGHT login panel ════ */}
         <div
-          className="flex-1 flex items-center justify-center p-8 relative"
-          style={{ background: 'linear-gradient(135deg, #0a0a0a 0%, #111111 100%)' }}
+          className="relative flex flex-1 items-center justify-center p-4 sm:p-6 lg:p-8"
+          style={{
+            background: "linear-gradient(135deg, #0a0a0a 0%, #111111 100%)",
+          }}
         >
           {/* subtle corner glow */}
           <div
             className="absolute bottom-0 right-0 w-80 h-80 rounded-full blur-3xl pointer-events-none opacity-5"
-            style={{ background: 'radial-gradient(circle, #d4a017, transparent)' }}
+            style={{
+              background: "radial-gradient(circle, #d4a017, transparent)",
+            }}
           />
 
           <div className="w-full max-w-sm">
-
             {/* Mobile logo */}
-            <div className="flex flex-col items-center mb-8 lg:hidden" style={{ animation: 'fadeInUp 0.7s both' }}>
-              <div style={{ mixBlendMode: 'screen', display: 'inline-flex' }} className="mb-3">
-                <img src="/assets/logo.png" alt="logo" className="w-20 h-20 object-contain" />
+            <div
+              className="flex flex-col items-center mb-8 lg:hidden"
+              style={{ animation: "fadeInUp 0.7s both" }}
+            >
+              <div
+                style={{ mixBlendMode: "screen", display: "inline-flex" }}
+                className="mb-3"
+              >
+                <img
+                  src="/assets/logo.png"
+                  alt="logo"
+                  className="w-20 h-20 object-contain"
+                />
               </div>
               <h1
                 className="text-xl font-black tracking-wide text-center"
                 style={{
-                  backgroundImage: 'linear-gradient(90deg, #c8960c 0%, #f5d060 50%, #c8960c 100%)',
-                  backgroundSize: '200% auto',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  animation: 'shimmerText 3s linear infinite',
+                  backgroundImage:
+                    "linear-gradient(90deg, #c8960c 0%, #f5d060 50%, #c8960c 100%)",
+                  backgroundSize: "200% auto",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  animation: "shimmerText 3s linear infinite",
                 }}
               >
                 Mission For Nation Ministry
@@ -270,25 +317,34 @@ export default function LoginPage() {
             {/* Login card */}
             <div
               ref={cardRef}
-              className="rounded-2xl p-8 border border-gray-800"
+              className="rounded-2xl border border-gray-800 p-6 sm:p-8"
               style={{
-                background: 'linear-gradient(145deg, #161616 0%, #111111 100%)',
-                animation: 'cardSlideIn 0.7s 0.1s both, borderPulse 4s 1s ease-in-out infinite',
+                background: "linear-gradient(145deg, #161616 0%, #111111 100%)",
+                animation:
+                  "cardSlideIn 0.7s 0.1s both, borderPulse 4s 1s ease-in-out infinite",
               }}
             >
-              <div className="mb-7" style={{ animation: 'fadeInUp 0.6s 0.4s both' }}>
+              <div
+                className="mb-7"
+                style={{ animation: "fadeInUp 0.6s 0.4s both" }}
+              >
                 <h2 className="text-white text-2xl font-bold">Welcome back</h2>
-                <p className="text-gray-500 text-sm mt-1">Sign in to the admin dashboard</p>
+                <p className="text-gray-500 text-sm mt-1">
+                  Sign in to the admin dashboard
+                </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Email */}
-                <div style={{ animation: 'fadeInUp 0.6s 0.55s both' }}>
+                <div style={{ animation: "fadeInUp 0.6s 0.55s both" }}>
                   <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
                     Email Address
                   </label>
                   <div className="relative">
-                    <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none" />
+                    <Mail
+                      size={15}
+                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none"
+                    />
                     <input
                       type="email"
                       required
@@ -301,12 +357,15 @@ export default function LoginPage() {
                 </div>
 
                 {/* Password */}
-                <div style={{ animation: 'fadeInUp 0.6s 0.7s both' }}>
+                <div style={{ animation: "fadeInUp 0.6s 0.7s both" }}>
                   <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
                     Password
                   </label>
                   <div className="relative">
-                    <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none" />
+                    <Lock
+                      size={15}
+                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-600 pointer-events-none"
+                    />
                     <input
                       type="password"
                       required
@@ -319,16 +378,18 @@ export default function LoginPage() {
                 </div>
 
                 {/* Submit */}
-                <div style={{ animation: 'fadeInUp 0.6s 0.85s both' }}>
+                <div style={{ animation: "fadeInUp 0.6s 0.85s both" }}>
                   <button
                     type="submit"
                     disabled={loading}
                     className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold text-black transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed mt-2 hover:scale-[1.02] active:scale-[0.98]"
                     style={{
                       background: loading
-                        ? '#8a6a0a'
-                        : 'linear-gradient(135deg, #c8960c 0%, #f5d060 50%, #c8960c 100%)',
-                      boxShadow: loading ? 'none' : '0 4px 24px rgba(212,160,23,0.35)',
+                        ? "#8a6a0a"
+                        : "linear-gradient(135deg, #c8960c 0%, #f5d060 50%, #c8960c 100%)",
+                      boxShadow: loading
+                        ? "none"
+                        : "0 4px 24px rgba(212,160,23,0.35)",
                     }}
                   >
                     {loading ? (
@@ -349,13 +410,12 @@ export default function LoginPage() {
 
             <p
               className="text-center text-gray-700 text-xs mt-6"
-              style={{ animation: 'fadeInUp 0.6s 1s both' }}
+              style={{ animation: "fadeInUp 0.6s 1s both" }}
             >
               Mission For Nation Ministry · Admin Access Only
             </p>
           </div>
         </div>
-
       </div>
     </>
   );

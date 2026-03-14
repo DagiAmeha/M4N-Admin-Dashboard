@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, Users, Calendar } from 'lucide-react';
-import PageHeader from '../../components/ui/PageHeader';
-import api from '../../api/axios';
-import type { Event } from '../../types';
-import Table from '../../components/ui/Table';
-import Button from '../../components/ui/Button';
-import Modal from '../../components/ui/Modal';
-import ConfirmDialog from '../../components/ui/ConfirmDialog';
-import { Input, Textarea } from '../../components/ui/Input';
-import Badge from '../../components/ui/Badge';
-import Pagination from '../../components/ui/Pagination';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from "react";
+import { Plus, Pencil, Trash2, Users, Calendar } from "lucide-react";
+import PageHeader from "../../components/ui/PageHeader";
+import api from "../../api/axios";
+import type { Event } from "../../types";
+import Table from "../../components/ui/Table";
+import Button from "../../components/ui/Button";
+import Modal from "../../components/ui/Modal";
+import ConfirmDialog from "../../components/ui/ConfirmDialog";
+import { Input, Textarea } from "../../components/ui/Input";
+import Badge from "../../components/ui/Badge";
+import Pagination from "../../components/ui/Pagination";
+import toast from "react-hot-toast";
 
 export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -24,11 +24,11 @@ export default function EventsPage() {
   const [deleting, setDeleting] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [dateTime, setDateTime] = useState('');
-  const [location, setLocation] = useState('');
-  const [coverImage, setCoverImage] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dateTime, setDateTime] = useState("");
+  const [location, setLocation] = useState("");
+  const [coverImage, setCoverImage] = useState("");
   const [allowsRegistration, setAllowsRegistration] = useState(true);
   const [isFull, setIsFull] = useState(false);
 
@@ -43,28 +43,35 @@ export default function EventsPage() {
         setTotal(res.data.pagination.total ?? 0);
       }
     } catch {
-      toast.error('Failed to load events');
+      toast.error("Failed to load events");
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => { fetchEvents(page); }, [page]);
+  useEffect(() => {
+    fetchEvents(page);
+  }, [page]);
 
   function openCreate() {
     setEditing(null);
-    setTitle(''); setDescription(''); setDateTime('');
-    setLocation(''); setCoverImage('');
-    setAllowsRegistration(true); setIsFull(false);
+    setTitle("");
+    setDescription("");
+    setDateTime("");
+    setLocation("");
+    setCoverImage("");
+    setAllowsRegistration(true);
+    setIsFull(false);
     setModalOpen(true);
   }
 
   function openEdit(ev: Event) {
     setEditing(ev);
-    setTitle(ev.title); setDescription(ev.description);
+    setTitle(ev.title);
+    setDescription(ev.description);
     setDateTime(ev.date_time.slice(0, 16));
     setLocation(ev.location);
-    setCoverImage(ev.cover_image ?? '');
+    setCoverImage(ev.cover_image ?? "");
     setAllowsRegistration(ev.allows_registration);
     setIsFull(ev.is_full);
     setModalOpen(true);
@@ -72,12 +79,13 @@ export default function EventsPage() {
 
   async function handleSave() {
     if (!title || !description || !dateTime || !location) {
-      return toast.error('Fill all required fields');
+      return toast.error("Fill all required fields");
     }
     setSaving(true);
     try {
       const body = {
-        title, description,
+        title,
+        description,
         date_time: new Date(dateTime).toISOString(),
         location,
         ...(coverImage ? { cover_image: coverImage } : {}),
@@ -86,15 +94,17 @@ export default function EventsPage() {
       };
       if (editing) {
         await api.put(`/api/events/${editing._id}`, body);
-        toast.success('Event updated');
+        toast.success("Event updated");
       } else {
-        await api.post('/api/events', body);
-        toast.success('Event created');
+        await api.post("/api/events", body);
+        toast.success("Event created");
       }
       setModalOpen(false);
       fetchEvents(page);
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message ?? 'Failed to save';
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "Failed to save";
       toast.error(msg);
     } finally {
       setSaving(false);
@@ -106,11 +116,11 @@ export default function EventsPage() {
     setDeleting(true);
     try {
       await api.delete(`/api/events/${deleteTarget._id}`);
-      toast.success('Event deleted');
+      toast.success("Event deleted");
       setDeleteTarget(null);
       fetchEvents(page);
     } catch {
-      toast.error('Failed to delete event');
+      toast.error("Failed to delete event");
     } finally {
       setDeleting(false);
     }
@@ -124,7 +134,16 @@ export default function EventsPage() {
         icon={Calendar}
         color="bg-green-600"
         count={total}
-        action={<Button onClick={openCreate} variant="light"><Plus size={16} />New Event</Button>}
+        action={
+          <Button
+            onClick={openCreate}
+            variant="light"
+            className="w-full justify-center sm:w-auto"
+          >
+            <Plus size={16} />
+            New Event
+          </Button>
+        }
       />
 
       <Table
@@ -133,14 +152,17 @@ export default function EventsPage() {
         data={events}
         emptyMessage="No events yet"
         columns={[
-          { header: 'Title', cell: (e) => <span className="font-medium">{e.title}</span> },
           {
-            header: 'Date & Time',
+            header: "Title",
+            cell: (e) => <span className="font-medium">{e.title}</span>,
+          },
+          {
+            header: "Date & Time",
             cell: (e) => new Date(e.date_time).toLocaleString(),
           },
-          { header: 'Location', cell: (e) => e.location },
+          { header: "Location", cell: (e) => e.location },
           {
-            header: 'Registrations',
+            header: "Registrations",
             cell: (e) => (
               <div className="flex items-center gap-1.5">
                 <Users size={14} className="text-gray-400" />
@@ -149,20 +171,32 @@ export default function EventsPage() {
             ),
           },
           {
-            header: 'Status',
+            header: "Status",
             cell: (e) => (
               <div className="flex gap-1">
-                {e.is_full ? <Badge variant="red">Full</Badge> : <Badge variant="green">Open</Badge>}
-                {!e.allows_registration && <Badge variant="yellow">No Reg.</Badge>}
+                {e.is_full ? (
+                  <Badge variant="red">Full</Badge>
+                ) : (
+                  <Badge variant="green">Open</Badge>
+                )}
+                {!e.allows_registration && (
+                  <Badge variant="yellow">No Reg.</Badge>
+                )}
               </div>
             ),
           },
           {
-            header: 'Actions',
+            header: "Actions",
             cell: (e) => (
               <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" onClick={() => openEdit(e)}><Pencil size={14} /></Button>
-                <Button variant="ghost" size="sm" onClick={() => setDeleteTarget(e)}>
+                <Button variant="ghost" size="sm" onClick={() => openEdit(e)}>
+                  <Pencil size={14} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDeleteTarget(e)}
+                >
                   <Trash2 size={14} className="text-red-500" />
                 </Button>
               </div>
@@ -173,27 +207,87 @@ export default function EventsPage() {
 
       <Pagination page={page} pages={pages} total={total} onChange={setPage} />
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? 'Edit Event' : 'New Event'} size="xl">
-        <div className="grid grid-cols-2 gap-4">
-          <Input label="Title *" value={title} onChange={(e) => setTitle(e.target.value)} className="col-span-2" />
-          <Textarea label="Description *" value={description} onChange={(e) => setDescription(e.target.value)} className="col-span-2" />
-          <Input label="Date & Time *" type="datetime-local" value={dateTime} onChange={(e) => setDateTime(e.target.value)} />
-          <Input label="Location *" value={location} onChange={(e) => setLocation(e.target.value)} />
-          <Input label="Cover Image URL (optional)" value={coverImage} onChange={(e) => setCoverImage(e.target.value)} className="col-span-2" placeholder="https://..." />
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={editing ? "Edit Event" : "New Event"}
+        size="xl"
+      >
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Input
+            label="Title *"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="md:col-span-2"
+          />
+          <Textarea
+            label="Description *"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="md:col-span-2"
+          />
+          <Input
+            label="Date & Time *"
+            type="datetime-local"
+            value={dateTime}
+            onChange={(e) => setDateTime(e.target.value)}
+          />
+          <Input
+            label="Location *"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+          <Input
+            label="Cover Image URL (optional)"
+            value={coverImage}
+            onChange={(e) => setCoverImage(e.target.value)}
+            className="md:col-span-2"
+            placeholder="https://..."
+          />
           <div className="flex items-center gap-3">
-            <input id="allows_reg" type="checkbox" checked={allowsRegistration} onChange={(e) => setAllowsRegistration(e.target.checked)} className="w-4 h-4 accent-indigo-600" />
-            <label htmlFor="allows_reg" className="text-sm font-medium text-gray-700">Allow Registration</label>
+            <input
+              id="allows_reg"
+              type="checkbox"
+              checked={allowsRegistration}
+              onChange={(e) => setAllowsRegistration(e.target.checked)}
+              className="w-4 h-4 accent-indigo-600"
+            />
+            <label
+              htmlFor="allows_reg"
+              className="text-sm font-medium text-gray-700"
+            >
+              Allow Registration
+            </label>
           </div>
           {editing && (
             <div className="flex items-center gap-3">
-              <input id="is_full" type="checkbox" checked={isFull} onChange={(e) => setIsFull(e.target.checked)} className="w-4 h-4 accent-red-600" />
-              <label htmlFor="is_full" className="text-sm font-medium text-gray-700">Mark as Full</label>
+              <input
+                id="is_full"
+                type="checkbox"
+                checked={isFull}
+                onChange={(e) => setIsFull(e.target.checked)}
+                className="w-4 h-4 accent-red-600"
+              />
+              <label
+                htmlFor="is_full"
+                className="text-sm font-medium text-gray-700"
+              >
+                Mark as Full
+              </label>
             </div>
           )}
         </div>
-        <div className="flex justify-end gap-3 pt-4">
-          <Button variant="secondary" onClick={() => setModalOpen(false)} disabled={saving}>Cancel</Button>
-          <Button onClick={handleSave} disabled={saving}>{saving ? 'Saving…' : 'Save'}</Button>
+        <div className="flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:justify-end sm:gap-3">
+          <Button
+            variant="secondary"
+            onClick={() => setModalOpen(false)}
+            disabled={saving}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleSave} disabled={saving}>
+            {saving ? "Saving…" : "Save"}
+          </Button>
         </div>
       </Modal>
 

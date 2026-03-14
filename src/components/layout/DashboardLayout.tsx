@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { Bell, Search } from "lucide-react";
+import { Bell, Menu, Search } from "lucide-react";
 import Sidebar from "./Sidebar";
 import { useAuth } from "../../context/AuthContext";
 
@@ -20,38 +21,73 @@ export default function DashboardLayout() {
   const { user } = useAuth();
   const location = useLocation();
   const pageTitle = titles[location.pathname] ?? "Admin";
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
-      <Sidebar />
+    <div className="flex min-h-screen bg-gray-100 overflow-hidden">
+      <div className="hidden lg:flex">
+        <Sidebar />
+      </div>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 flex lg:hidden">
+          <button
+            type="button"
+            aria-label="Close navigation"
+            className="absolute inset-0 bg-black/45"
+            onClick={() => setSidebarOpen(false)}
+          />
+          <div className="relative h-full w-[17rem] max-w-[85vw]">
+            <Sidebar
+              className="h-full min-h-full w-full"
+              onNavigate={() => setSidebarOpen(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* Top Header */}
-        <header className="h-14 bg-white border-b border-gray-200 flex items-center px-6 gap-4 shrink-0">
+        <header className="flex min-h-14 shrink-0 items-center gap-2 border-b border-gray-200 bg-white px-3 py-2 sm:gap-3 sm:px-4 md:px-6">
+          <button
+            type="button"
+            className="inline-flex rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 lg:hidden"
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open navigation"
+          >
+            <Menu size={18} />
+          </button>
+
           {/* Page title */}
-          <div className="flex-1">
-            <h2 className="text-sm font-semibold text-gray-800">{pageTitle}</h2>
+          <div className="min-w-0 flex-1">
+            <h2 className="truncate text-sm font-semibold text-gray-800">
+              {pageTitle}
+            </h2>
           </div>
 
           {/* Search */}
-          <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-1.5 w-56">
+          <div className="hidden w-56 items-center gap-2 rounded-lg bg-gray-100 px-3 py-1.5 md:flex lg:w-64">
             <Search size={14} className="text-gray-400 shrink-0" />
             <span className="text-gray-400 text-xs">Search...</span>
           </div>
 
           {/* Status badge */}
-          <div className="flex items-center gap-1.5 text-xs font-medium text-green-600 bg-green-50 border border-green-200 rounded-full px-3 py-1">
+          <div className="hidden items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-medium text-green-600 xl:flex">
             <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
             System Active
           </div>
 
           {/* Bell */}
-          <button className="relative p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+          <button className="relative hidden rounded-lg p-1.5 transition-colors hover:bg-gray-100 sm:inline-flex">
             <Bell size={18} className="text-gray-500" />
           </button>
 
           {/* User */}
-          <div className="flex items-center gap-2 pl-2 border-l border-gray-200">
+          <div className="flex items-center gap-2 border-l border-gray-200 pl-2 sm:pl-3">
             <div className="w-8 h-8 rounded-full bg-gray-900 border border-yellow-800 flex items-center justify-center overflow-hidden">
               <div style={{ mixBlendMode: "screen", display: "inline-flex" }}>
                 <img
@@ -72,7 +108,7 @@ export default function DashboardLayout() {
 
         {/* Main Content */}
         <main className="flex-1 overflow-auto">
-          <div className="p-6">
+          <div className="p-3 sm:p-4 md:p-6">
             <Outlet />
           </div>
         </main>

@@ -28,6 +28,11 @@ type SidebarSection = {
   items: SidebarItem[];
 };
 
+interface SidebarProps {
+  className?: string;
+  onNavigate?: () => void;
+}
+
 const sections: SidebarSection[] = [
   {
     label: "OVERVIEW",
@@ -57,7 +62,7 @@ const sections: SidebarSection[] = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ className = "", onNavigate }: SidebarProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -65,10 +70,13 @@ export default function Sidebar() {
     logout();
     navigate("/login");
     toast.success("Logged out");
+    onNavigate?.();
   }
 
   return (
-    <aside className="w-60 min-h-screen bg-gray-900 flex flex-col shrink-0">
+    <aside
+      className={`w-60 min-h-screen bg-gray-900 flex flex-col shrink-0 ${className}`}
+    >
       {/* Logo */}
       <div className="px-4 py-4 border-b border-gray-800">
         <div className="flex items-center gap-3">
@@ -115,6 +123,7 @@ export default function Sidebar() {
                   key={to}
                   to={to}
                   end={end}
+                  onClick={onNavigate}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${
                       isActive

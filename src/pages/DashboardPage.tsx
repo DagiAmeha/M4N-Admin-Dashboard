@@ -146,23 +146,23 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Banner */}
-      <div className="bg-indigo-600 rounded-2xl p-6 text-white flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
+      <div className="flex flex-col gap-4 rounded-2xl bg-indigo-600 p-4 text-white sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-start gap-3 sm:items-center sm:gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 sm:h-14 sm:w-14">
             <TrendingUp size={28} className="text-white" />
           </div>
-          <div>
-            <h1 className="text-xl font-bold">
+          <div className="min-w-0">
+            <h1 className="text-lg font-bold sm:text-xl">
               Welcome back, {user?.username ?? "Admin"}!
             </h1>
-            <p className="text-indigo-200 text-sm mt-0.5">
+            <p className="mt-0.5 text-xs text-indigo-200 sm:text-sm">
               Here's what's happening with your church platform.
             </p>
           </div>
         </div>
-        <div className="hidden md:flex items-center gap-2 bg-white/20 border border-white/30 rounded-full px-4 py-1.5 text-sm font-semibold">
+        <div className="hidden items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-1.5 text-sm font-semibold lg:flex">
           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
           Live Dashboard
         </div>
@@ -172,7 +172,7 @@ export default function DashboardPage() {
 
       {/* Stats */}
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
@@ -181,7 +181,7 @@ export default function DashboardPage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map((card) => (
             <StatsCard key={card.label} {...card} />
           ))}
@@ -189,11 +189,11 @@ export default function DashboardPage() {
       )}
 
       {/* Quick Links */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+      <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">
           Quick Actions
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {quickLinks.map((link) => (
             <Link
               key={link.to}

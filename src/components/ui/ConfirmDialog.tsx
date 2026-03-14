@@ -1,5 +1,5 @@
-import Modal from './Modal';
-import Button from './Button';
+import Modal from "./Modal";
+import Button from "./Button";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -11,15 +11,22 @@ interface ConfirmDialogProps {
 }
 
 export default function ConfirmDialog({
-  open, onClose, onConfirm, title = 'Confirm', message, loading,
+  open,
+  onClose,
+  onConfirm,
+  title = "Confirm",
+  message,
+  loading,
 }: ConfirmDialogProps) {
   return (
     <Modal open={open} onClose={onClose} title={title} size="md">
       <p className="text-gray-600 text-sm">{message}</p>
-      <div className="flex justify-end gap-3 mt-6">
-        <Button variant="secondary" onClick={onClose} disabled={loading}>Cancel</Button>
+      <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-3">
+        <Button variant="secondary" onClick={onClose} disabled={loading}>
+          Cancel
+        </Button>
         <Button variant="danger" onClick={onConfirm} disabled={loading}>
-          {loading ? 'Deleting…' : 'Delete'}
+          {loading ? "Deleting…" : "Delete"}
         </Button>
       </div>
     </Modal>
