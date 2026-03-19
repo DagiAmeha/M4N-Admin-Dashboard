@@ -22,12 +22,8 @@ interface ApiErrorShape {
 }
 
 interface LiveStatusResponse {
-  isLive?: boolean;
+  isLiveNow?: boolean;
   youtubeVideoId?: string;
-  data?: {
-    isLive?: boolean;
-    youtubeVideoId?: string;
-  };
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -126,21 +122,23 @@ export default function LiveSessionPage() {
   async function syncLiveStatus() {
     setSyncingStatus(true);
     try {
-      const res = await api.get<LiveStatusResponse>("/api/live");
-      const { isLive, youtubeVideoId: currentYoutubeVideoId } =
-        extractLiveStatus(res.data);
-
-      if (typeof isLive === "boolean") {
-        setStatus(isLive ? "live" : "stopped");
+      console.log("Fetching live status from API...");
+      const res = await api.get("/api/live");
+      console.log("Live status response:", res.data);
+      const result: LiveStatusResponse = res.data?.data;
+      const { isLiveNow, youtubeVideoId } = result;
+      console.log("Extracted live status:", { isLiveNow, youtubeVideoId });
+      if (typeof isLiveNow === "boolean") {
+        setStatus(isLiveNow ? "live" : "stopped");
       } else {
         setStatus("unknown");
       }
 
       if (
-        typeof currentYoutubeVideoId === "string" &&
-        currentYoutubeVideoId.trim().length > 0
+        typeof youtubeVideoId === "string" &&
+        youtubeVideoId.trim().length > 0
       ) {
-        setLastStartedVideoId(currentYoutubeVideoId);
+        setLastStartedVideoId(youtubeVideoId);
       }
     } catch {
       setStatus("unknown");
@@ -210,7 +208,6 @@ export default function LiveSessionPage() {
         res.data?.message ??
           "Live session stopped successfully. Your audience can no longer watch live.",
       );
-      await syncLiveStatus();
     } catch (error: unknown) {
       toast.error(
         getErrorMessage(
@@ -288,7 +285,7 @@ export default function LiveSessionPage() {
             <div className="flex items-start gap-2">
               <Youtube size={16} className="text-red-500 mt-0.5" />
               <div>
-                <p className="font-medium text-gray-900">Last Started Video</p>
+                <p className="font-medium text-gray-900">Started Video Id</p>
                 <p className="break-all">
                   {lastStartedVideoId ??
                     "No live session has been started yet."}

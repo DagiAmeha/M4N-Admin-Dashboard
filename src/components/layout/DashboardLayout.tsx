@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { Bell, Menu, Search } from "lucide-react";
+import { Bell, Menu, Search, X } from "lucide-react";
 import Sidebar from "./Sidebar";
 import { useAuth } from "../../context/AuthContext";
 
@@ -22,6 +22,7 @@ export default function DashboardLayout() {
   const location = useLocation();
   const pageTitle = titles[location.pathname] ?? "Admin";
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -29,26 +30,40 @@ export default function DashboardLayout() {
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
-      <div className="hidden h-screen lg:flex">
-        <Sidebar />
+      <div
+        className={`relative hidden h-screen overflow-hidden transition-all duration-300 ease-in-out lg:block ${desktopSidebarOpen ? "w-60" : "w-0"}`}
+      >
+        <Sidebar
+          className={`h-full min-h-full transition-transform duration-300 ease-in-out ${desktopSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        />
       </div>
 
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-40 flex lg:hidden">
-          <button
-            type="button"
-            aria-label="Close navigation"
-            className="absolute inset-0 bg-black/45"
-            onClick={() => setSidebarOpen(false)}
+      <div
+        className={`fixed inset-0 z-40 flex transition-opacity duration-300 lg:hidden ${
+          sidebarOpen
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
+        }`}
+      >
+        <button
+          type="button"
+          aria-label="Close navigation"
+          className={`absolute inset-0 bg-black/45 transition-opacity duration-300 ${
+            sidebarOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setSidebarOpen(false)}
+        />
+        <div
+          className={`relative h-full w-[17rem] max-w-[85vw] transform transition-transform duration-300 ease-out ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <Sidebar
+            className="h-full min-h-full w-full"
+            onNavigate={() => setSidebarOpen(false)}
           />
-          <div className="relative h-full w-[17rem] max-w-[85vw]">
-            <Sidebar
-              className="h-full min-h-full w-full"
-              onNavigate={() => setSidebarOpen(false)}
-            />
-          </div>
         </div>
-      )}
+      </div>
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {/* Top Header */}
@@ -56,8 +71,17 @@ export default function DashboardLayout() {
           <button
             type="button"
             className="inline-flex rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-            aria-label="Open navigation"
+            onClick={() => setSidebarOpen((prev) => !prev)}
+            aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
+          >
+            {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+
+          <button
+            type="button"
+            className="hidden rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100 lg:inline-flex"
+            onClick={() => setDesktopSidebarOpen((prev) => !prev)}
+            aria-label={desktopSidebarOpen ? "Hide sidebar" : "Show sidebar"}
           >
             <Menu size={18} />
           </button>
